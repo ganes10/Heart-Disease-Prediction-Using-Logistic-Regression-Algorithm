@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Disease Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .prediction-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #e0f7fa;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Heart Disease Prediction</h1>
+    <form id="prediction-form">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" min="18" max="150" required>
+        <span class="error" id="age-error"></span>
+
+        <label for="resting_BP">Resting Systolic Blood Pressure (mm Hg):</label>
+        <input type="number" id="resting_BP" name="resting_BP" min="50" max="250" required>
+
+        <label for="cholesterol">Serum Cholesterol (mm/dl):</label>
+        <input type="number" id="cholesterol" name="cholesterol" min="80" max="600" required>
+
+        <label for="MaxHR">Maximum Heart Rate Achieved:</label>
+        <input type="number" id="MaxHR" name="MaxHR" min="50" max="250" required>
+
+        <label for="oldpeak">ST Depression (mm):</label>
+        <input type="number" id="oldpeak" name="oldpeak" step="0.1" min="-2" max="2" required>
+
+        <label for="sex">Sex:</label>
+        <select id="sex" name="sex" required>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select>
+
+        <label for="chest_pain">Chest Pain Type:</label>
+        <select id="chest_pain" name="chest_pain" required>
+            <option value="No Chest Pain">No Chest Pain</option>
+            <option value="Typical Angina">Typical Angina</option>
+            <option value="Atypical Angina">Atypical Angina</option>
+            <option value="Non-Anginal Pain">Non-Anginal Pain</option>
+        </select>
+
+        <label for="fasting_bs">Fasting Blood Sugar:</label>
+        <select id="fasting_bs" name="fasting_bs" required>
+            <option value="120 or Under">120 or Under</option>
+            <option value="Over 120">Over 120</option>
+        </select>
+
+        <label for="resting_ECG">Resting ECG Results:</label>
+        <select id="resting_ECG" name="resting_ECG" required>
+            <option value="Normal">Normal</option>
+            <option value="ST-T wave abnormality">ST-T wave abnormality</option>
+            <option value="LV Hypertrophy">LV Hypertrophy</option>
+        </select>
+
+        <label for="ExerciseAngina">Exercise-Induced Angina:</label>
+        <select id="ExerciseAngina" name="ExerciseAngina" required>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+
+        <label for="ST_Slope">ST Segment Slope:</label>
+        <select id="ST_Slope" name="ST_Slope" required>
+            <option value="Sloping Upwards">Sloping Upwards</option>
+            <option value="Flat">Flat</option>
+            <option value="Sloping Downwards">Sloping Downwards</option>
+        </select>
+
+        <label for="selected_model">Prediction Model:</label>
+        <select id="selected_model" name="selected_model" required>
+            <option value="Neural Network">Neural Network</option>
+            <option value="Random Forest">Random Forest</option>
+        </select>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <div class="prediction-result" id="prediction-result"></div>
+
+    <footer>
+        &copy; 2025 Heart Disease Prediction System - by Ganesh Basnet(00020111)
+    </footer>
+
+    <script>
+        document.getElementById("prediction-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let age = document.getElementById("age").value;
+            if (age < 18 || age > 150) {
+                document.getElementById("age-error").textContent = "Age must be between 18 and 150.";
+                return;
+            } else {
+                document.getElementById("age-error").textContent = "";
+            }
+
+            fetch("/predict", {
+                method: "POST",
+                body: new FormData(event.target)
+            })
+            .then(response => response.text())
+            .then(result => {
+                document.getElementById("prediction-result").innerHTML = result;
+                document.getElementById("prediction-result").style.display = "block";
+            });
+        });
+    </script>
+</body>
+</html>
